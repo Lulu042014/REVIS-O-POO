@@ -1,0 +1,78 @@
+class ContaPoupanca:
+    def __init__(self, numero, titular, saldo=0):
+        self.numero = numero
+        self.titular = titular
+        self.saldo = saldo
+
+    def depositar(self, valor):
+        self.saldo += valor
+
+    def sacar(self, valor):
+        if valor <= self.saldo:
+            self.saldo -= valor
+        else:
+            print("Saldo insuficiente para saque.")
+
+    def __str__(self):
+        return f"Conta Poupança {self.numero} - Titular: {self.titular} - Saldo: R$ {self.saldo:.2f}"
+
+
+class BancoLista:
+    def __init__(self, taxa_juros=0.01):
+        self.contas = []
+        self.taxa_juros = taxa_juros
+
+    def adicionar_conta(self, conta):
+        self.contas.append(conta)
+
+    def buscar_conta(self, numero):
+        for conta in self.contas:
+            if conta.numero == numero:
+                return conta
+        return None
+
+    def render_juros(self, numero):
+        conta = self.buscar_conta(numero)
+        if conta:
+            if isinstance(conta, ContaPoupanca):
+                conta.saldo += conta.saldo * self.taxa_juros
+                print(f"Juros aplicados! Novo saldo: R$ {conta.saldo:.2f}")
+            else:
+                print("Essa conta não é uma conta poupança.")
+        else:
+            print("Conta não encontrada.")
+
+    def listar_contas(self):
+        for conta in self.contas:
+            print(conta)
+
+
+class Banco(BancoLista):
+    def __init__(self, nome, taxa_juros=0.01):
+        super().__init__(taxa_juros)
+        self.nome = nome
+
+    def __str__(self):
+        return f"Banco {self.nome} com {len(self.contas)} contas registradas."
+
+
+# Exemplo de uso
+if __name__ == "__main__":
+    banco = Banco("Banco Central", taxa_juros=0.02)
+
+    # Criar contas poupança
+    conta1 = ContaPoupanca(101, "Alice", 1000)
+    conta2 = ContaPoupanca(102, "Bob", 500)
+
+    # Adicionar contas ao banco
+    banco.adicionar_conta(conta1)
+    banco.adicionar_conta(conta2)
+
+    # Listar contas
+    banco.listar_contas()
+
+    # Render juros para uma conta poupança específica
+    banco.render_juros(101)
+
+    # Listar contas novamente para ver o saldo atualizado
+    banco.listar_contas()
